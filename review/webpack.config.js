@@ -1,7 +1,7 @@
 const path = require("path");
 
 module.exports = {
-  name: "rsp-dev",
+  name: "react-review",
   mode: "development",
   devtool: "eval",
   resolve: {

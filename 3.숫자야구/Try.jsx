@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useState } from "react";
 
 const Try = memo(({ tryInfo }) => {
   //부모로부터 받은 PROPS 변경하기
