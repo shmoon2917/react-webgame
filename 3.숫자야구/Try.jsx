@@ -1,12 +1,19 @@
-import React from 'react';
+import React, { memo } from "react";
 
-const Try = ({tryInfo}) => {
+const Try = memo(({ tryInfo }) => {
+  //부모로부터 받은 PROPS 변경하기
+  const [result, setResult] = useState(tryInfo.result);
+
+  const onClick = () => {
+    setResult("1");
+  };
+
   return (
     <li>
       <div>{tryInfo.try}</div>
-      <div>{tryInfo.result}</div>
+      <div onClick={onClick}>{result}</div>
     </li>
   );
-};
+});
 
 export default Try;
