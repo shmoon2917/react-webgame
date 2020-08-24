@@ -81,6 +81,38 @@ Object.entries(user); // [ ["name","John"], ["age",30] ]
 
 # 6. 로또 추첨기
 
+### 팁
+
+- Array.sort() 메소드 익히기
+
+```
+var fruit = ['orange', 'apple', 'banana']; // 문자 정렬
+
+/* 일반적인 방법 */
+fruit.sort(); // apple, banana, orange
+
+var score = [4, 11, 2, 10, 3, 1]; // 숫자 정렬
+
+/* 오류 */
+score.sort(); // 1, 10, 11, 2, 3, 4
+              // ASCII 문자 순서로 정렬되어 숫자의 크기대로 나오지 않음
+
+/* 정상 동작 */
+score.sort(function(a, b) { // 오름차순
+    return a - b;
+    // 1, 2, 3, 4, 10, 11
+});
+
+score.sort(function(a, b) { // 내림차순
+    return b - a;
+    // 11, 10, 4, 3, 2, 1
+});
+```
+
+### 이슈
+
+- getWinNumbers 를 화살표 함수로 작성하면 cannot find getWinNumbers 에러가 뜬다. 호이스팅 문제인 듯 하다.
+
 6-1. 로또 추첨기 컴포넌트
 
 - useState, useEffect 등을 써야 hooks임. 이런걸쓰지않으면 그냥 함수 컴포넌트
