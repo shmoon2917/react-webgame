@@ -76,12 +76,25 @@ Object.entries(user); // [ ["name","John"], ["age",30] ]
   -> disabled 변수를 추가하여 버튼을 클릭하고 다시 시작되기까지는 css로 disabled 처리할 수 있게끔 함.
 
 - (미) useEffect 작동 시 리턴되는 함수도 계속 작동함. 원래 그런 것인지 확인해보아야겠음
+  -> 6.로또 추첨기에서 작동 순서 확인. 이해됨
 
 ---
 
 # 6. 로또 추첨기
 
 ### 팁
+
+- useEffect 인풋 배열에 넣는 요소를 잘 선택해야한다. (인풋배열에 넣은 요소가 바뀔 때 다시 실행된다)
+
+- useMemo: 복잡한 함수 결괏값(리턴값)을 기억, 배열 요소가 바뀌기 전까지 기억(바뀌면 새로 실행되어 기억) / useRef: 일반 값을 기억
+
+- useState, useEffect 등을 써야 hooks임. 이런걸 쓰지않으면 그냥 함수 컴포넌트라 부름
+
+- componentWillMount / WillReceiveProps / WillUpdate 메소드는 사라질거라 사용하지 않는다.
+
+- setTimeout / setInterval 확실하게 정리해야한다 (ComponentWillUnMount 에서)
+
+- hooks 의 state 들은 조건문안에 절대 넣으면 안된다. 함수나 반복문 안에도 웬만하면 안넣는게 좋다.
 
 - Array.sort() 메소드 익히기
 
@@ -109,36 +122,25 @@ score.sort(function(a, b) { // 내림차순
 });
 ```
 
+- useEffect 작동 순서를 보자면 처음 useEffect 함수 실행 -> RedoHandler 실행 -> timeout.current 초기화 -> useEffect 에서 리턴되는 콜백 함수(종료되는) 실행 -> 다시 useEffect 실행 -> 컴포넌트 종료 시 리턴 콜백 함수 실행
+
 ### 이슈
 
 - getWinNumbers 를 화살표 함수로 작성하면 cannot find getWinNumbers 에러가 뜬다. 호이스팅 문제인 듯 하다.
 
-6-1. 로또 추첨기 컴포넌트
+- useCallback 함수 안에서 state 접근 시 초기값만을 기억함(클로저 현상) -> 따라서 함수 안에서 state 접근해야 한다면 두 번째 인자 배열에 요소값을 넣어줘야 함.
 
-- useState, useEffect 등을 써야 hooks임. 이런걸쓰지않으면 그냥 함수 컴포넌트
-- componentWillMount / WillReceiveProps / WillUpdate 메소드는 사라질거라 안쓰면된다
-- setTimeout / setInterval 확실하게 정리해야한다 (ComponentWillUnMount 에서)
+- 자식 컴포넌트에 메소드를 전달할 때는 useCallback 처리를 꼭 해줘야 함(함수가 새로 계속 생성되기 때문에 자식 쪽에서 리렌더링이 발생함)
 
-6-4. useEffect
--useEffect 인풋배열에 넣는 요소를 잘 선택해야한다. (인풋배열에 넣은 요소가 바뀔 때 다시 실행된다)
+- componentDidMount 단계 말고 DidUpdate 단계에서만 실행 됐으면 좋겠다면 (Hooks에서)
 
-6-5. useMemo와 useCallback
--useMemo: 복잡한 함수 결괏값(리턴값)을 기억, 배열 요소가 바뀌기 전까지 기억(바뀌면 새로 실행되어 기억)
--useRef: 일반 값을 기억
-
-- useCallback: 함수 자체를 기억, 함수 안에서 state 접근 시 초기값만을 기억함(클로저 현상같음) -> 따라서 두 번째 인자인 배열에 요소값을 넣어줌(넣어주게되면 새로 기억하는듯)
-- 자식컴포넌트에 메소드를 전달할 때는 useCallback 처리를 꼭 해줘야함(함수가 새로 계속 생성되기 때문에 자식쪽에서 리렌더링이 발생함)
-
-6-6. Hooks 에 대한 자잘한 팁들
-
-- hooks 의 state 들은 조건문안에 절대 넣으면 안된다. 함수나 반복문 안에도 웬만하면 안넣는게 좋다.
-
-- ComponentDidMount 말고 DidUpdate 단계에서만 실행 됐으면 좋겠다 (Hooks에서)
-  -> const mounted = useRef(false);
-  useEffect 안에서 if(!mounted.current) {
-  mounted.current = true;
+```
+const mounted = useRef(false);
+useEffect(() => {
+  if (!mounted.current) {
+    mounted.current = true;
   } else {
-  코드
+    // 원하는 코드
   }
-
-요렇게 작성하면 됨
+}, [요소]);
+```
