@@ -32,39 +32,54 @@ A.state 값은 변경되면 다시 렌더링되지만 ref 는 값이 변경되�
 
 ### 이슈
 
-리셋 버튼 누를때마다 screen 도 렌더링이 되는데, 역시나 불필요한 렌더링이 되는 중
+- 리셋 버튼 누를때마다 screen 도 렌더링이 되는데, 역시나 불필요한 렌더링이 되는 중
+  -> 해결 : 스크린과 result 를 다른 컴포넌트로 분리하고 pure 또는 memo 로 작성
 
--> 해결 : 스크린과 result 를 다른 컴포넌트로 분리하고 pure 또는 memo 로 작성
-
-부모 Component 자식 pureComponent 로 작성하였을 때는 잘 작동하나, memo로 작성하니 잘 되지 않는다.. 이유가 무엇일까
-
--> 작동 잘 됨! (pure -> pure / pure -> memo / memo -> memo / memo -> pure 다 잘 작동)
+- 부모 Component 자식 pureComponent 로 작성하였을 때는 잘 작동하나, memo로 작성하니 잘 되지 않는다.. 이유가 무엇일까
+  -> 문제 없었음. 그냥 refresh 하니 작동 잘 됨! (pure -> pure / pure -> memo / memo -> memo / memo -> pure 다 잘 작동)
 
 ---
 
 # 5. 가위바위보
 
-## 5.3 가위바위보 게임 만들기
-
-- 클로저 이슈 const { imgCoords } = this.state 를 비동기 함수 안에 넣었어야 했는데, 밖에서 선언함으로써 참조하는 값이 바뀌지 않는 문제 발생했음
-
-5-4. 고차함수와 QnA
-
-- Error: Maximum update depth exceeded 문제 발생.
-  https://kss7547.tistory.com/36
-  onClick 안에 화살표 함수를 넣어 해결할 수 있지만, 이렇게 되면 렌더링될때마다 새로운 함수가 생기게됨 -> 메모리문제 발생
-  -> 고차함수 패턴 사용
-
-5-5. Hooks 와 useEffect
+### 팁
 
 - hooks 에서는 라이프사이클 어떻게 처리하나
   -> useEffect 로 비슷하게 사용가능
-  -> 두 번째 인수 배열에 넣은 값(예제에서는 imgCoord) 들이 바뀔 때 useEffect 가 실행됨.
-  -> 그래서 예제에서는 계속 useEffect 가 실행되고 종료되고를 반복한다
+  -> 두 번째 인수 배열에 넣은 값(예제에서는 imgCoord) 들이 바뀔 때 useEffect 가 실행됨(그래서 예제에서는 계속 useEffect 가 실행되고 종료되고를 반복한다)
   -> 배열을 안넣은 상태는 componentDidMount 와 유사한 기능, 배열에 변수를 추가했을 때는 componentDidUpdate 와 유사한 기능을 수행한다.
-  -> useEffect 를 state 마다 따로 두어 기능을 수행할 수도 있다.( class 의 경우에는 componentDidMount 나 componentDidUpdate 에서 모든 state를 조건문으로 분기처리하여야함)
+  -> useEffect 를 state 마다 따로 두어 기능을 수행할 수도 있다.(class 의 경우에는 componentDidMount 나 componentDidUpdate 에서 모든 state를 조건문으로 분기처리하여야함)
 
-  5.6 클래스와 Hooks 라이프사이클 비교
+- Object.keys/values/entries 개념 익히기
+
+```
+let user = {
+  name: "John",
+  age: 30
+};
+
+Object.keys(user); // ["name", "age"]
+Object.values(user);  // ["John", 30]
+Object.entries(user); // [ ["name","John"], ["age",30] ]
+```
+
+### 이슈
+
+- 클로저 이슈 const { imgCoords } = this.state 를 비동기 함수 안에 넣었어야 했는데, 밖에서 선언함으로써 참조하는 값이 바뀌지 않는 문제 발생했음
+  -> 해결: 비동기 함수안에서 값을 참조하도록 위치 바꿔줌.
+
+- Error: Maximum update depth exceeded 문제 발생. (https://kss7547.tistory.com/36)
+  -> onClick 안에 화살표 함수를 넣어 해결할 수 있지만, 이렇게 되면 렌더링될 때마다 새로운 함수가 생기게됨 -> 메모리문제 발생
+  -> 고차함수 패턴 사용
+
+- 버튼을 클릭하여 멈췄을 때, 다시 버튼을 누르면 기능 작동이 꼬이는 이슈 발생
+  -> disabled 변수를 추가하여 버튼을 클릭하고 다시 시작되기까지는 css로 disabled 처리할 수 있게끔 함.
+
+- (미) useEffect 작동 시 리턴되는 함수도 계속 작동함. 원래 그런 것인지 확인해보아야겠음
+
+---
+
+# 6. 로또 추첨기
 
 6-1. 로또 추첨기 컴포넌트
 
