@@ -10,7 +10,7 @@ const Table = () => {
         {Array(tableData.length)
           .fill()
           .map((tr, i) => (
-            <Tr rowIndex={i} />
+            <Tr key={i} rowIndex={i} />
           ))}
       </tbody>
     </table>
