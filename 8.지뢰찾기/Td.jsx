@@ -53,7 +53,7 @@ const getTdText = (code) => {
     case CODE.QUESTION:
       return "?";
     default:
-      return false;
+      return code || "";
   }
 };
 
@@ -61,7 +61,6 @@ const Td = ({ rowIndex, cellIndex }) => {
   const { tableData, dispatch, halted } = useContext(TableContext);
 
   const onClickTd = useCallback(() => {
-    console.log(halted);
     if (halted) {
       return;
     }
