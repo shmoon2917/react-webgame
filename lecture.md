@@ -1,17 +1,25 @@
 벨로퍼트 리액트 강의 문서
 https://react.vlpt.us/basic/06-conditional-rendering.html
 
-# 3.13
+# 3. 숫자야구
 
-render 안에서는 this.setState사용 절대 안된다
+### 팁
 
-props를 바꾸고 싶을 때는 자식 컴포넌트에서 state로 바꾼다음 그 state를 변경한다.
-함수를 써주면 좀 더 세밀한 기능 구현이 가능하다(constructor / ref / setState )
+- render 안에서는 this.setState사용 절대 안된다
 
-jsx 에서 조건문은 삼항 연산자(또는 부호 연산자) 활용
+- props를 바꾸고 싶을 때는 자식 컴포넌트에서 state로 바꾼다음 그 state를 변경한다.
+
+- 함수를 써주면 좀 더 세밀한 기능 구현이 가능하다(constructor / ref / setState )
+
+- jsx 에서 조건문은 삼항 연산자(또는 부호 연산자) 활용
+
+### QnA
 
 Q. 숫자야구에서 getNumbers가 input 값이 바뀔때마다 계속 호출된다
-A. hooks에서는 state를 바꿀 때 훅스 함수 전체가 다시 실행되기 때문에 그 안에 있는 getNumbers 가 다시 호출되는 것임(나중에 어떻게 해결하는지 배움)
+
+A. hooks에서는 state를 바꿀 때 훅스 함수 전체가 다시 실행되기 때문에 그 안에 있는 getNumbers 가 다시 호출되는 것임(나중에 어떻게 해결하는지 배움) (useMemo 로 해결)
+
+---
 
 # 4. 반응속도 체크
 
@@ -163,6 +171,19 @@ useEffect(() => {
 
 ### 이슈
 
-- useEffect turn 바뀜 비동기적으로 문제발생
+- turn을 dispatch로 변경하고 useEffect 에서 접근하니 반대값으로 바뀌어있음(비동기적으로 문제발생) -> 동기적으로 처리해줘야해서 useEffect 끝에 넣음
 
 - 성능 최적화: 하나만 눌렀는데 전체가 다 렌더링됨 -> useRef와 useEffect를 사용해서 무엇때문에 새로 렌더링되는지를 파악할 수 있음(바뀌는게 있다면 그것때문에 리렌더링이 발생함)
+
+```
+const ref = useRef([]);
+useEffect(() => {
+  console.log(
+    rowIndex === ref.current[0],
+    cellIndex === ref.current[1],
+    dispatch === ref.current[2],
+    cellData === ref.current[3]
+  );
+  ref.current = [rowIndex, cellIndex, dispatch, cellData];
+}, [rowIndex, cellIndex, dispatch, cellData]);
+```
