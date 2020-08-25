@@ -187,3 +187,11 @@ useEffect(() => {
   ref.current = [rowIndex, cellIndex, dispatch, cellData];
 }, [rowIndex, cellIndex, dispatch, cellData]);
 ```
+
+---
+
+# 8. 지뢰찾기
+
+### 팁
+
+-
