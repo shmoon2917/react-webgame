@@ -11,6 +11,8 @@ export const CODE = {
   QUESTION_MINE: -5,
   CLICKED_MINE: -6,
   OPENED: 0,
+  AFTER_MINE: -8,
+  AFTER_FLAG_QUESTION: -9,
 };
 
 export const TableContext = createContext({
@@ -31,24 +33,24 @@ const plantMine = (row, cell, mine) => {
     )[0];
     shuffle.push(chosen);
   }
-  const data = [];
+  const tableData = [];
   for (let i = 0; i < row; i++) {
     const rowData = [];
-    data.push(rowData);
+    tableData.push(rowData);
     for (let j = 0; j < cell; j++) {
       rowData.push(CODE.NORMAL);
     }
   }
 
+  const mineCoords = [];
   for (let k = 0; k < shuffle.length; k++) {
     const ver = Math.floor(shuffle[k] / cell);
     const hor = shuffle[k] % cell;
-    data[ver][hor] = CODE.MINE;
+    tableData[ver][hor] = CODE.MINE;
+    mineCoords.push([ver, hor]);
   }
 
-  console.log(data);
-
-  return data;
+  return { tableData, mineCoords };
 };
 
 export const START_GAME = "START_GAME";
@@ -59,16 +61,36 @@ export const QUESTION_CELL = "QUESTION_CELL";
 export const NORMALIZE_CELL = "NORMALIZE_CELL";
 export const INCREMENT_TIMER = "INCREMENT_TIMER";
 
+const initialState = {
+  tableData: [],
+  coordData: {
+    mines: [],
+    flags: [],
+    questions: [],
+  },
+  timer: 0,
+  halted: true,
+  result: "",
+  openedCount: 0,
+};
+
 const reducer = (state, action) => {
   switch (action.type) {
     case START_GAME:
+      const { tableData, mineCoords } = plantMine(
+        action.row,
+        action.cell,
+        action.mine
+      );
       return {
         ...state,
-        tableData: plantMine(action.row, action.cell, action.mine),
-        halted: false,
-        data: {
-          mine: action.mine,
+        tableData,
+        coordData: {
+          mines: mineCoords,
+          flags: [],
+          questions: [],
         },
+        halted: false,
         openedCount: 0,
         timer: 0,
       };
@@ -145,18 +167,19 @@ const reducer = (state, action) => {
       let result = "";
 
       console.log(
-        tableData.length * tableData[0].length - state.data.mine,
+        tableData.length * tableData[0].length - state.coordData.mines.length,
         state.openedCount,
         openedCount
       );
 
       if (
-        tableData.length * tableData[0].length - state.data.mine ===
+        tableData.length * tableData[0].length -
+          state.coordData.mines.length ===
         state.openedCount + openedCount
       ) {
         // 승리
         halted = true;
-        result = `승리하셨습니다`;
+        result = `${state.timer} 초 만에 승리하셨습니다`;
       }
       return {
         ...state,
@@ -166,15 +189,30 @@ const reducer = (state, action) => {
         result,
       };
     }
-    case CLICK_MINE:
+    case CLICK_MINE: {
+      console.log(state);
       const tableData = [...state.tableData];
-      tableData[action.row] = [...state.tableData[action.row]];
+      tableData.forEach((row, i) => (tableData[i] = [...state.tableData[i]]));
+
+      // 지뢰 보여주기
+      state.coordData.mines.forEach((coord, i) => {
+        tableData[coord[0]][coord[1]] = CODE.AFTER_MINE;
+      });
+
+      state.coordData.flags.forEach((coord, i) => {
+        if (tableData[coord[0]][coord[1]] === CODE.FLAG) {
+          tableData[coord[0]][coord[1]] = CODE.AFTER_FLAG_QUESTION;
+        }
+      });
+
       tableData[action.row][action.cell] = CODE.CLICKED_MINE;
       return {
         ...state,
         tableData,
+        result: "졌습니다. 다시 시작하세요",
         halted: true,
       };
+    }
     case FLAG_CELL: {
       const tableData = [...state.tableData];
       tableData[action.row] = [...state.tableData[action.row]];
@@ -186,6 +224,11 @@ const reducer = (state, action) => {
       return {
         ...state,
         tableData,
+        coordData: {
+          mines: [...state.coordData.mines],
+          flags: [...state.coordData.flags, [action.row, action.cell]],
+          questions: [...state.coordData.questions],
+        },
       };
     }
     case QUESTION_CELL: {
@@ -223,16 +266,6 @@ const reducer = (state, action) => {
     default:
       return;
   }
-};
-
-const initialState = {
-  tableData: [],
-  halted: true,
-  data: {
-    mine: 0,
-  },
-  result: "",
-  openedCount: 0,
 };
 
 const MineSearch = () => {

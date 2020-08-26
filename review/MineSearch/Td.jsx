@@ -16,6 +16,10 @@ const getTdStyle = (code) => {
       return {
         background: "#444",
       };
+    case CODE.AFTER_MINE:
+      return {
+        color: "red",
+      };
     case CODE.CLICKED_MINE:
     case CODE.OPENED:
       return {
@@ -31,6 +35,11 @@ const getTdStyle = (code) => {
       return {
         background: "yellow",
       };
+    case CODE.AFTER_FLAG_QUESTION:
+      return {
+        background: "orange",
+        fontSize: "8px",
+      };
     default:
       return {
         background: "white",
@@ -41,8 +50,9 @@ const getTdStyle = (code) => {
 const getTdText = (code) => {
   switch (code) {
     case CODE.NORMAL:
-      return "";
     case CODE.MINE:
+      return "";
+    case CODE.AFTER_MINE:
       return "X";
     case CODE.FLAG:
     case CODE.FLAG_MINE:
@@ -52,6 +62,8 @@ const getTdText = (code) => {
       return "?";
     case CODE.CLICKED_MINE:
       return "펑!";
+    case CODE.AFTER_FLAG_QUESTION:
+      return "여기아냐..";
     default:
       return code || "";
   }
