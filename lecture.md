@@ -1,6 +1,9 @@
 벨로퍼트 리액트 강의 문서
 https://react.vlpt.us/basic/06-conditional-rendering.html
 
+리액트 트레이닝
+https://reacttraining.com/
+
 # 3. 숫자야구
 
 ### 팁
@@ -194,8 +197,26 @@ useEffect(() => {
 
 ### 팁
 
+- context api 를 사용할 때, 자식 컴포넌트로 전달할 value 값을 꼭 useMemo로 감싸야 한다. 그렇지 않으면 value 가 바뀔 때마다 계속 리렌더링되기 때문! useMemo 를 사용해서 캐싱을 해둬야함.
+
+- context api 를 사용하고 React DevTool 로 볼 때, context를 사용하는 모든 컴포넌트들이 깜빡거리나, useMemo 를 사용하면 실제로 렌더링은 한번만 되는 것을 볼 수 있다.
+
 ### QnA
 
 Q. 지뢰 검사할 때 위 아래로만 분기하여 검사하는 이유?
 
 A. row 열은 undefined 가 되면 undefined 의 속성값에 접근하려는 코드 때문에 에러가 발생하는 것.
+
+---
+
+# 9. router
+
+### 팁
+
+- 라우터 주소는 프론트엔드 단에서만 유효하다. 실제 주소가 아님 (브라우저라우터는 새로고침하면 에러남)
+- 해쉬 라우터는 새로고침해도 동작한다.(해쉬 뒷부분을 알아서 처리해줌) 그러나 해쉬 라우터는 검색엔진 로봇에게 검색이 되지 않아 잘 쓰지 않는다. ( 물론 브라우저라우터를 사용해도 seo를 위해서는 따로 세팅이 필요하긴 하다)
+- 라우트가 많아지면 관리하기 어려운데 이 때 사용하는게 DYNAMIC ROUTE MATCHING
+
+### 이슈
+
+- Hooks 는 컴포넌트가 안뜨는 문제 발생
