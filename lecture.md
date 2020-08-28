@@ -1,6 +1,3 @@
-벨로퍼트 리액트 강의 문서
-https://react.vlpt.us/basic/06-conditional-rendering.html
-
 리액트 트레이닝
 https://reacttraining.com/
 
@@ -221,4 +218,4 @@ A. row 열은 undefined 가 되면 undefined 의 속성값에 접근하려는 �
 
 ### 이슈
 
-- Hooks 는 컴포넌트가 안뜨는 문제 발생
+- Hooks 는 컴포넌트가 안뜨는 문제 발생 -> 갑자기 해결됨(?)
